@@ -1,12 +1,5 @@
 # -------- TO DO --------- #
 
-# Set the directories below to correspond to paths on your machine:
-
-# The directory where the analysis is performed:
-#wd_path <- '/home/jennifer/African-Frugivory/'
-#wd_path <- '/Users/camilledesisto/Documents/GitHub/African-Frugivory'
-#wd_path <- "/home/grad/jnk21/projects/African-Frugivory-V2"
-
 # The directory where the original data are:
 data_path <- 'RawData/'
 # The directory where the processed data should be saved:
@@ -22,11 +15,12 @@ save_files <- TRUE
 # Loading libraries.
 library(ape)
 library(data.table)
+library(superheat)
 
 load(paste0(save_path, "Obs_X.dat"))
-load(paste0(save_path, "Obs_W.dat"))
+#load(paste0(save_path, "Obs_W.dat"))
 m.names <- rownames(Obs_X)
-p.names <- rownames(Obs_W)
+#p.names <- rownames(Obs_W)
 
 # --------------------
 # PART 1: Loading the (single) vertebrate phylogenetic trees from the donwloaded file.

@@ -1,4 +1,4 @@
-# This file processes the key data sources: 
+# This file processes the raw data to create the following key data sources: 
 # Adj_matrix_new.rds, O_A, O_P
 # Saves useful info about studies
 
@@ -6,13 +6,9 @@
 
 # Set the directories below to correspond to paths on your machine:
 
-# The directory where the analysis is performed:
-#wd_path <- "/Users/camilledesisto/Documents/GitHub/African-Frugivory"
-#wd_path <- "/home/grad/jnk21/projects/African-Frugivory-V2"
-
 # The directory within the working directory where the data are:
 data_path <- 'RawData/'
-save_path <- 'ProcessedData/'
+save_path <- 'ProcessedData/' # Create this directory
 
 library(foreach)
 library(doParallel)
@@ -28,11 +24,11 @@ save_files <- TRUE
 
 # ---------- PART A: Loading in the data -------------- #
 
-frugivore_mut  <- read.csv(paste0(data_path, "frugivore_mut.csv"))
-frug_fol_mut <- read.csv(paste0(data_path, "Africa_Frugivores_new_orig.csv"))[, -c(1:2)] # frugivory and folivory data combined: use this for occurrences
-study_dta <- read.csv(paste0(data_path, "occurrence_metadata6.csv")) %>% 
+frugivore_mut  <- read.csv(paste0(data_path, "Frugivory.csv"))
+frug_fol_mut <- read.csv(paste0(data_path, "Frugivory_folivory.csv"))[, -c(1:2)] # frugivory and folivory data combined: use this for occurrences
+study_dta <- read.csv(paste0(data_path, "Site_metadata.csv")) %>% 
                       mutate(Country = ifelse(Country == "Republic of Congo", "Congo", Country))
-study_locs <- read_excel(paste0(data_path, "AfFrug_study_locations.xlsx"))
+study_locs <- read_excel(paste0(data_path, "Study_locations.xlsx"))
 
 # ------------- PART B: CLEAN STUDY META DATA ---------------------#
 
@@ -307,8 +303,6 @@ if(save_files){
   save(study_info1, file = paste0(save_path, 'study_info1.dat'))
   save(study_info2, file = paste0(save_path, 'study_info2.dat'))
   save(unique_locs, file = paste0(save_path, 'loc_info.dat'))
-  #save(O_P_factor, file = paste0(save_path, 'OP_factor_full.dat'))
-  #save(O_A_factor, file = paste0(save_path, 'OA_factor_full.dat'))
 }
 
 

@@ -10,13 +10,13 @@ interactions from a multi-study data set.
 
 The key raw data sources are:
 
--   Frugivory only data: "Frugivory.csv"
+-   Frugivory only data: Frugivory.csv
 
--   Frugivory and folivory meta-anlaysis: "Frugivory_folivory.csv"
+-   Frugivory and folivory meta-anlaysis: Frugivory_folivory.csv
 
--   Site metadata: "Site_metadata.csv"
+-   Site metadata: Site_metadata.csv
 
--   Study locations: "Study_locations.xlsx"
+-   Study locations: Study_locations.xlsx
 
 Additional information on the construction of the meta-analysis is
 included in this folder.

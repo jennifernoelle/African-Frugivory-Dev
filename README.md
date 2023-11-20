@@ -107,17 +107,4 @@ specify a directory where results from the individual studies can be
 saved. We recommend you create a folder at the same level as the
 Analysis/, Data/, and HelperScripts/ folders that is named Results/.
 
-## References
 
-Bello, C., Galetti, M., Montan, D., Pizo, M. A., Mariguela, T. C.,
-Culot, L., Bufalo, F., Labecca, F., Pedrosa, F., Constantini, R., Emer,
-C., Silva, W. R., da Silva, F. R., Ovaskainen, O., & Jordano, P. (2017).
-Atlantic frugivory: A plant-frugivore interaction data set for the
-Atlantic Forest. Ecology, 98(6), 1729.
-<https://doi.org/10.1002/ecy.1818>
-
-## Acknowledgements
-
-This project has received funding from the European Research Council
-(ERC) under the European Union's Horizon 2020 research and innovation
-programme (grant agreement No 856506; ERC-synergy project LIFEPLAN)

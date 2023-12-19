@@ -33,16 +33,15 @@ perform this analysis is in the Analysis/ folder under the name
 
 ## Code
 
-You must create the folder ProcessedData under the main directory for
-the project
-
-The folder HelperScriptsJK/ includes functions (modified from
+The folder HelperScriptsJK/ includes functions (with substantial modifications from
 <https://github.com/gpapadog/BiasedNetwork>) that are used in the
-analysis code.
+analysis code while the folder HelperScriptsPapadogeourgouWithFixes/ includes
+more minor modifications for occurrence estimation within the original model for
+comparison purposes.
 
 The code for the analysis is in the folder Analysis/. The numbers in the
 beginning of the file names represent the order with which the files
-should be used/run.
+should be used/run. In brief the content of each analysis file is as follows:
 
 -   0a_network_cleaning.R: This code MUST be run before any subsequent
     analysis. Assembles key network and meta-data sources.
@@ -76,4 +75,4 @@ should be used/run.
 For replicating the analysis results in this code, you will need to
 specify a directory where processed data and results can be saved. We
 recommend you create a folder at the same level as the Analysis/, Data/,
-and HelperScripts/ folders that is named Results/.
+and HelperScripts/ folders that is named Results/ and ProcessedData/.

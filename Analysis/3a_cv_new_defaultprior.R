@@ -5,10 +5,10 @@ data_path <- 'ProcessedData/'
 # Where you want to save MCMC results:
 result_path <- 'Results/'
 # Where the functions are available:
-source_path <- 'HelperScriptsJK/'
+source_path <- 'HelperScriptsNew/'
 
 #Save results using convention: res_date_i.rda
-date <- 'Expert_prior'
+date <- 'Default_prior'
 
 # ------ STEP 0: Some functions. --------- #
 
@@ -22,7 +22,6 @@ source(paste0(source_path, 'UpdRho_function.R'))
 source(paste0(source_path, 'OmegaFromV_function.R'))
 source(paste0(source_path, 'useful_functions.R'))
 source(paste0(source_path, 'CorrMat_function.R'))
-#source(paste0(source_path, 'MCMC_function_trim.R'))
 source(paste0(source_path, 'MCMC_function_trimmore.R'))
 source(paste0(source_path, 'PredictInteractions_function.R'))
 source(paste0(source_path, 'GetPredLatFac_function.R'))
@@ -74,16 +73,9 @@ Cv <- Cv[wh_keep_p, wh_keep_p]
 # Same country and habitat: 0.5, same region and habitat: 0.45, same habitat only: 0.25,
 # Same country not habitat: 0.1, same region not habitat: 0.05
 
-## Improved guess: Expert 1 modified
-# Same study: 1, same site: 0.75 -> 0.85
-# Same country and habitat: 0.5 -> 0.65, same region and habitat: 0.45 -> 0.35, same habitat only: 0.25,
-# Same country not habitat: 0.1, same region not habitat: 0.05 
+## Improved defualt guess: 1/0.75
+obs_OP <- ifelse(obs_OP == 1, 1, 0.75)
 
-obs_OP <- ifelse(obs_OP == 0.75, 0.85, obs_OP)
-obs_OP <- ifelse(obs_OP == 0.5, 0.65, obs_OP)
-obs_OP <- ifelse(obs_OP == 0.45, 0.35, obs_OP)
-#obs_OP <- ifelse(obs_OP == 0.25, 0.2, obs_OP)
-#obs_OP <- ifelse(obs_OP == 0.05, 0.01, obs_OP)
 
 # Getting the combined network for the interactions recorded in any study
 comb_A <- apply(obs_A, c(1, 2), sum)
@@ -177,7 +169,7 @@ mcmc.cv.parallel <- function(rr, n.cv,
   mcmc <- MCMC.trimmore.new(obs_A = use_A, focus = use_F, p_occur_B = obs_OM, p_occur_P = obs_OP,
                obs_X = obs_X, obs_W = obs_W, Cu = Cu, Cv = Cv,
                Nsims = Nsims, burn = burn, thin = thin,
-               use_H = use_H, bias_cor = bias_cor,use_shrinkage = TRUE,
+               use_H = use_H, bias_cor = bias_cor, use_shrinkage = TRUE,
                theta_inf = theta_inf, mh_n_pis = mh_n_pis,
                mh_n_pjs = mh_n_pjs, mh_n_rho = mh_n_rho,
                stick_alpha = stick_alpha, prior_theta = prior_theta,
@@ -198,7 +190,7 @@ mcmc.cv.parallel <- function(rr, n.cv,
 
 #---------------------- STEP 3: RUN THE SAMPLER -------------------------------------------#
 
-# We highly recommend running the following code in parallel on 30 machines.
+# We highly recommend running the following code with 30 repetitions in parallel on 30 machines.
 repetitions <- 30
 n.cv <- 100
 

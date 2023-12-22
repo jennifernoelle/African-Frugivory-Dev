@@ -1,5 +1,3 @@
-# This version doesn't save full probabilities but rather running mean
-# Doesn't save marginal probabilities or latent factors at all
 
 # --------- TO DO: set  your directories and name the current results files using the date ---------#
 
@@ -13,7 +11,7 @@ data_path <- 'ProcessedData/'
 # Where you want to save MCMC results:
 save_path <- 'Results/'
 # Where the functions are available:
-source_path <- 'HelperScriptsJK/'
+source_path <- 'HelperScriptsNew/'
 
 # ------ STEP 0: Some functions. --------- #
 

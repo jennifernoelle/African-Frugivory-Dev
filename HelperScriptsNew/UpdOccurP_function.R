@@ -94,30 +94,21 @@ UpdOccurP <- function(occur_indicators, occur_prior_probs, curr_occur_probs, det
     occur <- occur_indicators[, st]
     p_curr <- curr_occur_probs[, st]
     p_prior <- occur_prior_probs[, st]
-    #p_prop <- rtnorm(n = num_obs,  mean = p_curr, sd = mh_occ_step, lower = 0, upper = 1)
     p_prop <- rtruncnorm(n = 1,  mean = p_curr, sd = mh_occ_step, a = 0, b = 1)
 
     # Calculating the likelihood, prior, and proposal for proposed value for each proposed value: 
-    #log_prior_prop <- dtnorm(x = p_prop, lower = 0, upper = 1, mean = p_prior, sd = mh_occ_sd, log = TRUE)
     log_prior_prop <- log(dtruncnorm(x = p_prop, a = 0, b = 1, mean = p_prior, sd = mh_occ_sd))
     log_lik_prop <- log(p_prop^occur * (1-p_prop)^(1-occur))
-    #log_prop <- dtnorm(x = p_prop, lower = 0, upper = 1, mean = p_curr, sd = mh_occ_sd, log = TRUE) # msm version is not significantly faster
     log_prop <- log(dtruncnorm(x = p_prop, a = 0, b= 1, mean = p_curr, sd = mh_occ_sd))  
     
     # Calculating the likelihood, prior, and proposal for proposed value for each current value: 
-    #log_prior_curr <- dtnorm(x = p_curr, lower = 0, upper = 1, mean = p_prior, sd = mh_occ_sd, log = TRUE)
     log_prior_curr <- log(dtruncnorm(x = p_curr, a = 0, b = 1, mean = p_prior, sd = mh_occ_sd))
     log_lik_curr <- log(p_curr^occur * (1-p_curr)^(1-occur))
-    #log_curr <- dtnorm(x = p_curr, lower = 0, upper = 1, mean = p_prop, sd = mh_occ_sd, log = TRUE) 
     log_curr <- log(dtruncnorm(x = p_curr, a = 0, b = 1, mean = p_prop, sd = mh_occ_sd))
     
     AP <- log_lik_prop + log_prior_prop + log_curr
     AP <- AP - (log_lik_curr + log_prior_curr + log_prop)
-    
-    # 
-    # AP_prop <- log_lik_prop + log_prior_prop + log_curr
-    # AP_curr <- log_lik_curr + log_prior_curr + log_prop
-    # 
+
     update <- log(runif(num_obs)) < AP
     new_value_p[update, st] <- p_prop[update]
     accepted[update, st] <- 1
@@ -132,12 +123,4 @@ UpdOccurP <- function(occur_indicators, occur_prior_probs, curr_occur_probs, det
   r <- list(new_value_p = new_value_p, accepted = accepted)
   return(r)
   
-  # Debugging
-  # not_detected <- which(detected == 0)
-  # hist(new_value_p[not_detected])
 }
-
-## debug: why is acceptance rate so high? Maybe because i'm starting at prior mean?
-## debug: it's actually possible for a plant to be recorded as present without detected interactions
-# use prior == 1 instead of detected ==1 
-

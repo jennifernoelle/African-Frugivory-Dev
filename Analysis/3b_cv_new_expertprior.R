@@ -3,12 +3,12 @@
 # Where the processed data are saved:
 data_path <- 'ProcessedData/'
 # Where you want to save MCMC results:
-result_path <- 'Results/NewSampler/'
+result_path <- 'Results/'
 # Where the functions are available:
-source_path <- 'HelperScriptsPapadogeorgouWithFixes/'
+source_path <- 'HelperScriptsNew/'
 
 #Save results using convention: res_date_i.rda
-date <- 'Old_expert_prior'
+date <- 'Expert_prior'
 
 # ------ STEP 0: Some functions. --------- #
 
@@ -17,11 +17,13 @@ source(paste0(source_path, 'UpdTraitCoef_function.R'))
 source(paste0(source_path, 'UpdLatFac_function.R'))
 source(paste0(source_path, 'UpdProbObs_function.R'))
 source(paste0(source_path, 'UpdOccur_function.R'))
+source(paste0(source_path, 'UpdOccurP_function.R'))
 source(paste0(source_path, 'UpdRho_function.R'))
 source(paste0(source_path, 'OmegaFromV_function.R'))
 source(paste0(source_path, 'useful_functions.R'))
 source(paste0(source_path, 'CorrMat_function.R'))
-source(paste0(source_path, 'MCMC_function_trim.R'))
+#source(paste0(source_path, 'MCMC_function_trim.R'))
+source(paste0(source_path, 'MCMC_function_trimmore.R'))
 source(paste0(source_path, 'PredictInteractions_function.R'))
 source(paste0(source_path, 'GetPredLatFac_function.R'))
 source(paste0(source_path, 'GetPredWeights_function.R'))
@@ -29,6 +31,7 @@ source(paste0(source_path, 'GetPredWeights_function.R'))
 library(parallel)
 library(abind)
 library(tidyverse)
+library(truncnorm)
 
 # Loading the data:
 load(paste0(data_path, 'Cu_phylo.dat'))
@@ -54,7 +57,6 @@ obs_W <- obs_W[, 1:2]
 
 ## Subset to remove baboons
 wh_keep_m <- which(rownames(obs_A) %in% nobab.list[[1]])
-#common.plants <- names(which(apply(obs_A, 2, sum)>10))
 wh_keep_p <- which(colnames(obs_A) %in% nobab.list[[2]])
 wh_keep_s <- which(unlist(dimnames(obs_A)[3]) %in% nobab.list[[3]])
 
@@ -66,7 +68,6 @@ obs_X <- Obs_X[wh_keep_m, ]
 obs_W <- Obs_W[wh_keep_p, ]
 Cu <- Cu[wh_keep_m, wh_keep_m]
 Cv <- Cv[wh_keep_p, wh_keep_p]
-
 
 ## The following assignments were used in creating obs_OP
 # Same study: 1, same site: 0.75
@@ -96,29 +97,36 @@ nS <- dim(obs_A)[3]
 
 # -------------- STEP 1: Specifications. ------------ #
 
-bias_cor <- TRUE  # Performing bias correction.
+bias_cor <- TRUE # Performing bias correction.
 
-Nsims <- 5 #10000 recommended
-burn <-  1 #10000 recommended
-thin <-  1 #10-40 recommended 
-use_H <- 10 # original 10
+Nsims <- 10000 
+burn <-  10000 
+thin <-  10 
+use_H <- 10 
 theta_inf <- 0.01
 mh_n_pis <- 70  # Parameter for proposal in Metropolis-Hastings for pi update.
 mh_n_pjs <- 70
 mh_n_rho <- 100
+mh_occ_sd <- 0.1
+mh_occ_step <- 0.25
 
 # Prior distributions:
 stick_alpha <- 5
 prior_theta <- c(1, 1)
 prior_tau <- c(5, 5)
-prior_rho <- c(5, 5)  
+prior_rho <- c(5, 5)  # I do not update this for now.
 prior_mu0 <- 0
 prior_sigmasq0 <- 10
 prior_sigmasq <- c(1, 1)
 
-sampling <- NULL
+# sampling <- NULL
+sampling <- list(L = TRUE, lambda = TRUE, tau = TRUE, beta = TRUE,
+                 gamma = TRUE, sigmasq = TRUE, sigmasq_p = TRUE,
+                 delta = TRUE, zeta = TRUE, U = TRUE, V = TRUE, v = TRUE,
+                 z = TRUE, theta = TRUE, pis = TRUE, pjs = TRUE, rU = TRUE,
+                 rV = TRUE, miss_X = TRUE, miss_W = TRUE, O_B = FALSE,
+                 O_P = TRUE, p_OB = FALSE, p_OP = TRUE)
 start_values <- NULL
-
 
 # ------------- STEP 2: Parallel setup --------------- #
 
@@ -126,10 +134,11 @@ start_values <- NULL
 # Define the cv function to run in parallel 
 
 mcmc.cv.parallel <- function(rr, n.cv, 
-                             obs_A, focus, occur_B, occur_P, obs_X, obs_W, Cu, Cv,
+                             obs_A, focus, p_occur_B, p_occur_P, obs_X, obs_W, Cu, Cv,
                              Nsims, burn, thin, use_H = 10, use_shrinkage = TRUE,
                              bias_cor = TRUE, theta_inf = 0.01,
                              mh_n_pis = 100, mh_n_pjs = 100, mh_n_rho = 100,
+                             mh_occ_sd = 0.1, mh_occ_step = 0.25,
                              stick_alpha = 5, prior_theta = c(1, 1), prior_tau = c(5, 5),
                              prior_rho = c(5, 5), prior_mu0 = 0, prior_sigmasq0 = 10,
                              prior_sigmasq = c(1, 1), start_values = NULL,
@@ -165,7 +174,7 @@ mcmc.cv.parallel <- function(rr, n.cv,
   }
   
   # Running the MCMC with the new recorded interaction matrix:
-  mcmc <- MCMC.trim(obs_A = use_A, focus = use_F, occur_B = obs_OM, occur_P = obs_OP,
+  mcmc <- MCMC.trimmore.new(obs_A = use_A, focus = use_F, p_occur_B = obs_OM, p_occur_P = obs_OP,
                obs_X = obs_X, obs_W = obs_W, Cu = Cu, Cv = Cv,
                Nsims = Nsims, burn = burn, thin = thin,
                use_H = use_H, bias_cor = bias_cor,use_shrinkage = TRUE,
@@ -195,12 +204,13 @@ n.cv <- 100
 
 t1 <- Sys.time()
 mclapply(1:repetitions, function(i) mcmc.cv.parallel(rr=i, n.cv = n.cv, 
-                                               obs_A = obs_A, focus = obs_F, occur_B = obs_OM, occur_P = obs_OP,
+                                               obs_A = obs_A, focus = obs_F, p_occur_B = obs_OM, p_occur_P = obs_OP,
                                                obs_X = obs_X, obs_W = obs_W, Cu = Cu, Cv = Cv,
                                                Nsims = Nsims, burn = burn, thin = thin,
                                                use_H = use_H, bias_cor = bias_cor,use_shrinkage = TRUE,
                                                theta_inf = theta_inf, mh_n_pis = mh_n_pis,
                                                mh_n_pjs = mh_n_pjs, mh_n_rho = mh_n_rho,
+                                               mh_occ_sd = mh_occ_sd, mh_occ_step = mh_occ_step,
                                                stick_alpha = stick_alpha, prior_theta = prior_theta,
                                                prior_tau = prior_tau, prior_rho = prior_rho,
                                                prior_mu0 = prior_mu0, prior_sigmasq0 = prior_sigmasq0,

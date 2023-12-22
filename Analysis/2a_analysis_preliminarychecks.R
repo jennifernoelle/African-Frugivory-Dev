@@ -5,9 +5,7 @@
 ## YOU REALLY HAVE TO SET THESE ##
 
 # The directory where the analysis is performed:
-#wd_path <- '/Users/camilledesisto/Documents/GitHub/African-Frugivory'
-#wd_path <- "/home/grad/jnk21/projects/African-Frugivory-V2"
-wd_path<- "/hpc/group/dunsonlab/jkampe/African-Frugivory-V2"
+wd_path <- "/hpc/group/dunsonlab/jkampe/African-Frugivory-V2"
 setwd(wd_path)
 
 ## THESE SHOULD BE THE SAME IF YOU CLONED THE REPO ##
@@ -30,8 +28,6 @@ load(paste0(data_path, 'obs_A_mammals.dat'))
 load(paste0(data_path, 'F_obs_default.dat'))
 load(paste0(data_path, 'Obs_X.dat')) # mammal traits
 load(paste0(data_path, 'Obs_W.dat')) # plant traits
-#load(paste0(data_path, 'obs_OP_defaultMethod.dat')) # study level obs_OP2
-#load(paste0(data_path, 'obs_OM_defaultMethod.dat')) # study level obs_OM2
 load(paste0(data_path, 'obs_OM.dat')) # site level obs_OM
 load(paste0(data_path, 'obs_OP.dat')) # site level obs_OP
 load(paste0(data_path, 'traits_p_709_clean.dat')) # plant occurrences: most species have many studies, but some have 0?

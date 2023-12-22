@@ -50,9 +50,7 @@ UpdOccur <- function(detected, occur, occur_others, probobs_curr, probobs_others
   for (st in 1 : num_studies) {
     occ_others_st <- outer(rep(1,num_obs), occur_others[, st] )
     # Take product over other species
-    prob1 <- apply((1 - pipj) ^ (curr_inter * focus[, , st]* occ_others_st), 1, prod) ###### ERROR st was previously ss, should also include occur indicators for other species
-    #prob1old <- apply((1 - pipj) ^ (curr_inter * focus[, , st]), 1, prod)
-    #cat("\nstudy = ", st, sum(prob1old == prob1)) # if animal focused, this will be unchanged for plants and we don't care about occurrences for animals b/c focus
+    prob1 <- apply((1 - pipj) ^ (curr_inter * focus[, , st]* occ_others_st), 1, prod) 
     prob1 <- occur[, st] * prob1 # Multiply by occurrence probabilities to get prob occurrence == 1
     prob0 <- 1 - occur[, st] # Prob occurrence == 0
     prob1 <- prob1 / (prob1 + prob0) # Standardize

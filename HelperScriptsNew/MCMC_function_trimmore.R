@@ -1,8 +1,3 @@
-# New Errors: 
-  # I changed the UpdLatFac function to handle case when no binary covariates
-  # I changed the UpdOccur function due to an index error (ss should be st)
-
-
 
 #' MCMC for bipartite network model with trait information and unrecorded
 #' interactions
@@ -78,27 +73,6 @@
 #' 
 #' 
 #' 
-
-
-# TO DO: 
-  # What do we need returned in order to run the plotting file
-    # Heatmap: uses posterior mean of imputed L's: pred_L = mcmc$Ls (so we could take a running mean instead)
-    # Correlations: scalar, easy to save all mcmc$rU and mcmc$rV
-    # CV: needs to save the mcmc$Ls, but individual samples are needed - maybe we can thin more?
-    # Trait matching: uses all iters of mcmc$mod_pL1s (not bias corrected)
- # Large objects we don't need
-    # Latent factors: n_iter x n_species x h Us, Vs - just save running mean?
-    # pis, pjs n_iter x n_species- just save running mean
-    # pL1s n_iter x n_b x n_p - I don't think we use this at all
- # How to reduce memory usage further
-    # Large burn-in
-    # Small number of iterations (maybe 500)
-    # Large thinning (maybe 10)
-
-# DEFAULT PRIOR OCCURRENCES
-# SET DEFAULT PRIOR PRECISION AT THE SAME TIME SO PROBABILITIES CAN MOVE MORE WITH A WEAKER GUESS
-# X ADD AN ERROR MESSAGE IF THERE ARE NON-1 OCCURRENCE PROBABILITIES WHERE AN INTERACTION WAS ACTUALLY DETECTED
-# EXPERIMENT WITH MH AND PRIOR PARAMETERS: ACCEPT RATE IS HIGH AND POST IS STILL V CLOSE TO PRIOR
 
 MCMC.trimmore.new <- function(obs_A, focus, p_occur_B, p_occur_P, obs_X, obs_W, Cu, Cv,
                  Nsims, burn, thin, use_H = 10, use_shrinkage = TRUE,
